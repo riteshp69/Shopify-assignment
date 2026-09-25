@@ -1,0 +1,228 @@
+{% liquid
+  assign color_option_index = -1
+
+  for option in product.options_with_values
+    assign option_name = option.name | downcase
+    if option_name contains 'color' or option_name contains 'colour'
+      assign color_option_index = forloop.index0
+      break
+    endif
+  endfor
+
+  assign has_clearance = false
+  assign has_final_sale = false
+
+  for tag in product.tags
+    assign normalized_tag = tag | downcase | strip
+    if normalized_tag == 'clearance'
+      assign has_clearance = true
+    endif
+    if normalized_tag == 'final sale' or normalized_tag == 'final-sale'
+      assign has_final_sale = true
+    endif
+  endfor
+
+  assign selected_variant = product.selected_or_first_available_variant
+  if selected_variant == blank
+    assign selected_variant = product.variants.first
+  endif
+
+  assign selected_image = selected_variant.featured_image | default: product.featured_image
+  assign selected_price = selected_variant.price
+  assign selected_compare = selected_variant.compare_at_price
+%}
+
+<article
+  class="assignment-product-card"
+  data-product-card
+  data-selected-variant-id="{{ selected_variant.id }}"
+  data-selected-available="{% if selected_variant.available %}true{% else %}false{% endif %}"
+>
+  <div class="assignment-product-card__media">
+    <a
+      class="assignment-product-card__image-link"
+      data-product-link
+      href="{{ selected_variant.url | default: product.url }}"
+      aria-label="{{ product.title | escape }}"
+    >
+      {% if selected_image != blank %}
+        {{
+          selected_image
+          | image_url: width: 600
+          | image_tag:
+            class: 'assignment-product-card__image',
+            loading: 'lazy',
+            widths: '214, 428, 600',
+            sizes: '214px',
+            alt: selected_image.alt | default: product.title
+        }}
+      {% else %}
+        <div class="assignment-product-card__placeholder">
+          {{ 'product-1' | placeholder_svg_tag }}
+        </div>
+      {% endif %}
+    </a>
+
+    {% if has_clearance or has_final_sale %}
+      <div class="assignment-product-card__badges">
+        {% if has_clearance %}
+          <span class="assignment-product-card__badge">Clearance</span>
+        {% endif %}
+        {% if has_final_sale %}
+          <span class="assignment-product-card__badge">Final Sale</span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if color_option_index > -1 %}
+      {% assign color_option = product.options_with_values[color_option_index] %}
+
+      <div class="assignment-product-card__swatches" role="group" aria-label="Choose a colour">
+        {% assign visible_count = 0 %}
+
+        {% for color_value in color_option.values %}
+          {% if visible_count < 5 %}
+            {% assign matching_variant = blank %}
+
+            {% for variant in product.variants %}
+              {% case color_option_index %}
+                {% when 0 %}
+                  {% assign variant_color = variant.option1 %}
+                {% when 1 %}
+                  {% assign variant_color = variant.option2 %}
+                {% when 2 %}
+                  {% assign variant_color = variant.option3 %}
+              {% endcase %}
+
+              {% if variant_color == color_value %}
+                {% if variant.available %}
+                  {% assign matching_variant = variant %}
+                  {% break %}
+                {% elsif matching_variant == blank %}
+                  {% assign matching_variant = variant %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+            {% if matching_variant != blank %}
+              {% assign swatch_image = matching_variant.featured_image | default: product.featured_image %}
+              {% assign swatch_hex = '#d9d9d9' %}
+              {% assign color_key = color_value | downcase | handleize %}
+
+              {% case color_key %}
+                {% when 'black', 'black-gem', 'black-gems', 'onyx', 'ebony' %}
+                  {% assign swatch_hex = '#1c1b1f' %}
+                {% when 'white', 'ivory', 'cream', 'off-white' %}
+                  {% assign swatch_hex = '#f5f2ed' %}
+                {% when 'pink', 'rose', 'blush', 'dusty-pink' %}
+                  {% assign swatch_hex = '#d7a4b6' %}
+                {% when 'red', 'burgundy', 'wine', 'maroon' %}
+                  {% assign swatch_hex = '#7d2f3a' %}
+                {% when 'blue', 'navy', 'cobalt' %}
+                  {% assign swatch_hex = '#3f5f82' %}
+                {% when 'green', 'olive', 'sage', 'mint' %}
+                  {% assign swatch_hex = '#8b9a80' %}
+                {% when 'brown', 'chocolate', 'mocha', 'tan' %}
+                  {% assign swatch_hex = '#8a624b' %}
+                {% when 'beige', 'nude', 'sand', 'camel' %}
+                  {% assign swatch_hex = '#c8b092' %}
+                {% when 'grey', 'gray', 'charcoal' %}
+                  {% assign swatch_hex = '#777777' %}
+              {% endcase %}
+
+              <button
+                type="button"
+                class="assignment-product-card__swatch"
+                data-swatch
+                data-variant-id="{{ matching_variant.id }}"
+                data-variant-url="{{ matching_variant.url }}"
+                data-image-url="{% if swatch_image != blank %}{{ swatch_image | image_url: width: 600 }}{% endif %}"
+                data-image-alt="{{ swatch_image.alt | default: product.title | escape }}"
+                data-price="{{ matching_variant.price | money }}"
+                data-compare="{% if matching_variant.compare_at_price > matching_variant.price %}{{ matching_variant.compare_at_price | money }}{% endif %}"
+                data-available="{% if matching_variant.available %}true{% else %}false{% endif %}"
+                style="background: {{ swatch_hex }};"
+                aria-selected="{% if matching_variant.id == selected_variant.id %}true{% else %}false{% endif %}"
+                aria-label="{{ color_value | escape }}"
+              ></button>
+
+              {% assign visible_count = visible_count | plus: 1 %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+        {% if color_option.values.size > 5 %}
+          <span class="assignment-product-card__overflow" aria-label="{{ color_option.values.size | minus: 5 }} more colours">
+            +{{ color_option.values.size | minus: 5 }}
+          </span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <button
+      type="button"
+      class="assignment-product-card__quick-add"
+      data-quick-add
+      data-variant-id="{{ selected_variant.id }}"
+      aria-label="{% if selected_variant.available %}Add selected variant to cart{% else %}Selected variant is sold out{% endif %}"
+      {% unless selected_variant.available %}disabled{% endunless %}
+    >
+      <svg viewBox="0 0 12.36 16" aria-hidden="true" focusable="false">
+        <path
+          d="M2.1 5.1V3.55a4.08 4.08 0 0 1 8.16 0V5.1M1.25 5.1h9.86l.7 9.65H.55l.7-9.65Z"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.35"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <div class="assignment-product-card__content">
+    <a
+      class="assignment-product-card__link"
+      data-product-link
+      href="{{ selected_variant.url | default: product.url }}"
+    >
+      <h3 class="assignment-product-card__title">{{ product.title | escape }}</h3>
+    </a>
+
+    {% if product.vendor != blank %}
+      <p class="assignment-product-card__vendor">{{ product.vendor | escape }}</p>
+    {% endif %}
+
+    {% if product.type != blank %}
+      <p class="assignment-product-card__secondary">{{ product.type | escape }}</p>
+    {% endif %}
+
+    <p class="assignment-product-card__price-row">
+      <span class="assignment-product-card__price" data-product-price>
+        {{ selected_price | money }}
+      </span>
+
+      <span
+        class="assignment-product-card__compare"
+        data-product-compare
+        {% unless selected_compare > selected_price %}hidden{% endunless %}
+      >
+        {% if selected_compare > selected_price %}
+          {{ selected_compare | money }}
+        {% endif %}
+      </span>
+    </p>
+
+    {% if has_final_sale %}
+      <p class="assignment-product-card__final-sale">Final Sale</p>
+    {% endif %}
+
+    <p
+      class="assignment-product-card__status"
+      data-product-status
+      {% if selected_variant.available %}hidden{% endif %}
+    >
+      Sold out
+    </p>
+  </div>
+</article>

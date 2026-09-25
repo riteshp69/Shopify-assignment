@@ -1,0 +1,543 @@
+{% comment %}
+  Test 2 — Reusable product-card grid
+  Renders real Shopify products and delegates the individual card markup to
+  snippets/assignment-product-card.liquid.
+{% endcomment %}
+
+<section
+  id="AssignmentProductGrid-{{ section.id }}"
+  class="assignment-product-grid"
+  data-assignment-product-grid
+>
+  <div class="assignment-product-grid__inner">
+    {% if section.settings.heading != blank %}
+      <h2 class="assignment-product-grid__heading">{{ section.settings.heading | escape }}</h2>
+    {% endif %}
+
+    {% if section.settings.collection != blank and section.settings.collection.products_count > 0 %}
+      <div
+        class="assignment-product-grid__list"
+        style="--assignment-columns: {{ section.settings.columns_desktop }};"
+      >
+        {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
+          {% render 'assignment-product-card',
+            product: product,
+            section_id: section.id
+          %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="assignment-product-grid__empty">
+        <p>Select a collection with products in the Theme Editor.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  #AssignmentProductGrid-{{ section.id }} {
+    --assignment-card-width: 214px;
+    --assignment-card-height: 415px;
+    --assignment-ink: #1c1b1f;
+    --assignment-muted: #666666;
+    --assignment-border: #d9d9d9;
+    --assignment-surface: #ffffff;
+    --assignment-focus: #1c1b1f;
+    padding: 48px 24px;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-grid__inner {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-grid__heading {
+    margin: 0 0 32px;
+    color: var(--assignment-ink);
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-grid__list {
+    display: grid;
+    grid-template-columns: repeat(var(--assignment-columns), minmax(0, var(--assignment-card-width)));
+    gap: 32px;
+    align-items: start;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card {
+    position: relative;
+    width: var(--assignment-card-width);
+    min-width: 0;
+    height: var(--assignment-card-height);
+    color: var(--assignment-ink);
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__media {
+    position: relative;
+    width: 214px;
+    height: 300px;
+    overflow: hidden;
+    background: #f3f1ef;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__image,
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__placeholder {
+    background: #f1efed;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__placeholder svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__badges {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: calc(100% - 16px);
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__badge {
+    display: inline-flex;
+    width: max-content;
+    max-width: 100%;
+    min-height: 18px;
+    align-items: center;
+    padding: 3px 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #1c1b1f;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__swatches {
+    position: absolute;
+    z-index: 4;
+    left: 8px;
+    bottom: 8px;
+    display: flex;
+    width: 80px;
+    height: 30px;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 42px;
+    background: rgba(255, 255, 255, 0.80);
+    overflow: hidden;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__swatch {
+    flex: 0 0 12px;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 0.5px rgba(28, 27, 31, 0.25);
+    transition: transform 120ms ease;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__swatch:hover {
+    transform: scale(1.12);
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__swatch[aria-selected="true"] {
+    box-shadow:
+      0 0 0 1px #ffffff,
+      0 0 0 2px #1c1b1f;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__swatch:focus-visible,
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__quick-add:focus-visible,
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__link:focus-visible {
+    outline: 2px solid var(--assignment-focus);
+    outline-offset: 3px;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__overflow {
+    flex: 0 0 auto;
+    margin-left: -1px;
+    color: #1c1b1f;
+    font-size: 10px;
+    line-height: 12px;
+    white-space: nowrap;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__quick-add {
+    position: absolute;
+    z-index: 4;
+    right: 8px;
+    bottom: 8px;
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.80);
+    color: #1c1b1f;
+    cursor: pointer;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__quick-add svg {
+    width: 12.36px;
+    height: 16px;
+    display: block;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__quick-add[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 214px;
+    height: 95px;
+    padding: 10px 10px 16px;
+    box-sizing: border-box;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__title {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0;
+    color: #000000;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__vendor {
+    margin: 0;
+    color: #000000;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 14px;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__secondary {
+    margin: 0;
+    color: #000000;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 14px;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-height: 19px;
+    margin: 0;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__price {
+    color: #000000;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 19px;
+    white-space: nowrap;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__compare {
+    color: #666666;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14px;
+    text-decoration: line-through;
+    white-space: nowrap;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__final-sale {
+    display: inline-block;
+    width: max-content;
+    margin: 0;
+    color: #000000;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0.26px;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card__status {
+    margin: 0;
+    color: #7b1515;
+    font-size: 11px;
+    line-height: 15px;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card.is-adding {
+    pointer-events: none;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-card.is-adding .assignment-product-card__quick-add {
+    opacity: 0.5;
+  }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-grid__empty {
+    padding: 40px 0;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  @media screen and (max-width: 749px) {
+    #AssignmentProductGrid-{{ section.id }} {
+      padding: 32px 16px;
+    }
+
+    #AssignmentProductGrid-{{ section.id }} .assignment-product-grid__list {
+      grid-template-columns: repeat(2, minmax(0, 214px));
+      justify-content: center;
+      gap: 24px 16px;
+    }
+  }
+
+  @media screen and (prefers-reduced-motion: reduce) {
+    #AssignmentProductGrid-{{ section.id }} .assignment-product-card__swatch {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById('AssignmentProductGrid-{{ section.id }}');
+    if (!root || root.dataset.assignmentProductGridInitialized === 'true') return;
+
+    root.dataset.assignmentProductGridInitialized = 'true';
+
+    const addUrl = '{{ routes.cart_add_url }}.js';
+
+    const parseSections = (response) => {
+      if (!response || !response.sections) return;
+
+      const cartDrawer = root.closest('shopify-section')?.ownerDocument?.querySelector('cart-drawer')
+        || document.querySelector('cart-drawer');
+
+      if (cartDrawer && typeof cartDrawer.renderContents === 'function') {
+        cartDrawer.renderContents(response);
+      }
+
+      const iconBubble = document.querySelector('#cart-icon-bubble');
+      const updatedBubble = response.sections['cart-icon-bubble'];
+
+      if (iconBubble && updatedBubble) {
+        const temp = document.createElement('div');
+        temp.innerHTML = updatedBubble;
+        const replacement = temp.querySelector('#cart-icon-bubble');
+
+        if (replacement) {
+          iconBubble.innerHTML = replacement.innerHTML;
+        }
+      }
+    };
+
+    const updateCard = (card, button) => {
+      const image = card.querySelector('[data-product-image]');
+      const titleLink = card.querySelector('[data-product-link]');
+      const price = card.querySelector('[data-product-price]');
+      const compare = card.querySelector('[data-product-compare]');
+      const status = card.querySelector('[data-product-status]');
+
+      const variantId = button.dataset.variantId;
+      const variantUrl = button.dataset.variantUrl;
+      const imageUrl = button.dataset.imageUrl;
+      const imageAlt = button.dataset.imageAlt || '';
+
+      card.dataset.selectedVariantId = variantId;
+      card.dataset.selectedAvailable = button.dataset.available === 'true' ? 'true' : 'false';
+
+      if (image && imageUrl) {
+        image.src = imageUrl;
+        image.srcset = '';
+        image.alt = imageAlt;
+      }
+
+      if (titleLink && variantUrl) {
+        titleLink.href = variantUrl;
+      }
+
+      if (price) {
+        price.textContent = button.dataset.price || '';
+      }
+
+      if (compare) {
+        compare.textContent = button.dataset.compare || '';
+        compare.hidden = !button.dataset.compare;
+      }
+
+      if (status) {
+        status.textContent = button.dataset.available === 'true' ? '' : 'Sold out';
+        status.hidden = button.dataset.available === 'true';
+      }
+
+      const quickAdd = card.querySelector('[data-quick-add]');
+      if (quickAdd) {
+        quickAdd.disabled = button.dataset.available !== 'true';
+        quickAdd.dataset.variantId = variantId;
+        quickAdd.setAttribute('aria-label', button.dataset.available === 'true'
+          ? 'Add selected variant to cart'
+          : 'Selected variant is sold out');
+      }
+
+      card.querySelectorAll('[data-swatch]').forEach((swatch) => {
+        swatch.setAttribute('aria-selected', swatch === button ? 'true' : 'false');
+      });
+    };
+
+    root.addEventListener('click', async (event) => {
+      const swatch = event.target.closest('[data-swatch]');
+
+      if (swatch) {
+        const card = swatch.closest('[data-product-card]');
+        if (!card) return;
+
+        updateCard(card, swatch);
+        return;
+      }
+
+      const quickAdd = event.target.closest('[data-quick-add]');
+
+      if (!quickAdd) return;
+
+      event.preventDefault();
+
+      const card = quickAdd.closest('[data-product-card]');
+      if (!card || card.classList.contains('is-adding')) return;
+
+      const variantId = quickAdd.dataset.variantId;
+      if (!variantId || quickAdd.disabled) return;
+
+      const originalLabel = quickAdd.getAttribute('aria-label');
+
+      card.classList.add('is-adding');
+      quickAdd.disabled = true;
+      quickAdd.setAttribute('aria-label', 'Adding to cart');
+
+      try {
+        const response = await fetch(addUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            items: [{
+              id: Number(variantId),
+              quantity: 1
+            }],
+            sections: ['cart-drawer', 'cart-icon-bubble'],
+            sections_url: window.location.pathname
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.description || 'Unable to add this item to the cart.');
+        }
+
+        parseSections(data);
+
+        quickAdd.setAttribute('aria-label', 'Added to cart');
+      } catch (error) {
+        console.error('Test 2 quick add error:', error);
+
+        const status = card.querySelector('[data-product-status]');
+        if (status) {
+          status.textContent = error.message || 'Unable to add to cart.';
+          status.hidden = false;
+        }
+
+        quickAdd.setAttribute('aria-label', 'Could not add to cart');
+      } finally {
+        window.setTimeout(() => {
+          card.classList.remove('is-adding');
+          quickAdd.disabled = card.dataset.selectedAvailable !== 'true';
+          quickAdd.setAttribute('aria-label', originalLabel || 'Add selected variant to cart');
+        }, 600);
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Assignment product grid",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Multiple Swatches"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Assignment product grid"
+    }
+  ]
+}
+{% endschema %}
