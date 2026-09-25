@@ -1,0 +1,848 @@
+{% liquid
+  assign section_id = 'drop-teaser-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="assignment-drop-teaser"
+  data-drop-teaser
+  data-target-date="{{ section.settings.target_date | escape }}"
+>
+  <div class="drop-teaser-inner">
+
+    <div class="drop-teaser-left" aria-labelledby="{{ section_id }}-heading">
+      <div class="drop-teaser-artwork" aria-hidden="true">
+        <img
+          class="drop-teaser-artwork-vectors"
+          src="{{ 'drop-teaser-vectors.svg' | asset_url }}"
+          alt=""
+          width="679"
+          height="519"
+        >
+
+        <img
+          class="drop-teaser-artwork-dice"
+          src="{{ 'drop-teaser-dice.svg' | asset_url }}"
+          alt=""
+          width="93"
+          height="51"
+        >
+
+        <img
+          class="drop-teaser-artwork-bottom-shape"
+          src="{{ 'drop-teaser-bottom-shape.svg' | asset_url }}"
+          alt=""
+          width="84"
+          height="66"
+        >
+
+        <img
+          class="drop-teaser-artwork-left-shape"
+          src="{{ 'drop-teaser-left-shape.svg' | asset_url }}"
+          alt=""
+          width="67"
+          height="96"
+        >
+
+        <img
+          class="drop-teaser-artwork-flame"
+          src="{{ 'drop-teaser-flame.svg' | asset_url }}"
+          alt=""
+          width="50"
+          height="67"
+        >
+
+        <img
+          class="drop-teaser-artwork-torso"
+          src="{{ 'drop-teaser-torso.svg' | asset_url }}"
+          alt=""
+          width="100"
+          height="89"
+        >
+
+        <img
+          class="drop-teaser-artwork-heart-lock"
+          src="{{ 'drop-teaser-heart-lock.svg' | asset_url }}"
+          alt=""
+          width="119"
+          height="103"
+        >
+
+        <img
+          class="drop-teaser-artwork-group-160"
+          src="{{ 'drop-teaser-group-160.svg' | asset_url }}"
+          alt=""
+          width="62"
+          height="43"
+        >
+
+        <span class="drop-teaser-background-letter">A</span>
+      </div>
+
+      <div class="drop-teaser-left-content">
+
+        <div class="drop-teaser-top-art" aria-hidden="true">
+          <img
+            src="{{ 'drop-teaser-heart-lock.svg' | asset_url }}"
+            alt=""
+            width="119"
+            height="103"
+          >
+        </div>
+
+        <div class="drop-teaser-headline-row">
+          <h2 id="{{ section_id }}-heading" class="drop-teaser-headline">
+            {{ section.settings.headline }}
+          </h2>
+
+          <span class="drop-teaser-headline-mark" aria-hidden="true">♡</span>
+        </div>
+
+        <div class="drop-teaser-countdown" data-countdown>
+          <div class="drop-teaser-time-group">
+            <div class="drop-teaser-digits" data-days aria-label="Days">
+              <span>0</span><span>0</span>
+            </div>
+            <span class="drop-teaser-label">Days</span>
+          </div>
+
+          <span class="drop-teaser-separator" aria-hidden="true">:</span>
+
+          <div class="drop-teaser-time-group">
+            <div class="drop-teaser-digits" data-hours aria-label="Hours">
+              <span>0</span><span>0</span>
+            </div>
+            <span class="drop-teaser-label">Hours</span>
+          </div>
+
+          <span class="drop-teaser-separator" aria-hidden="true">:</span>
+
+          <div class="drop-teaser-time-group">
+            <div class="drop-teaser-digits" data-seconds aria-label="Seconds">
+              <span>0</span><span>0</span>
+            </div>
+            <span class="drop-teaser-label">Seconds</span>
+          </div>
+        </div>
+
+        <p class="drop-teaser-expired" data-expired hidden>
+          {{ section.settings.expired_text }}
+        </p>
+      </div>
+    </div>
+
+    <div class="drop-teaser-right">
+      {% if section.settings.product_image != blank %}
+        <div class="drop-teaser-right-image">
+          {{
+            section.settings.product_image
+            | image_url: width: 1400
+            | image_tag:
+              loading: 'lazy',
+              widths: '500, 700, 1000, 1400',
+              sizes: '(min-width: 901px) 50vw, 100vw',
+              alt: section.settings.product_image.alt
+          }}
+
+          <div class="drop-teaser-right-image">
+  {{
+    section.settings.product_image
+    | image_url: width: 1400
+    | image_tag:
+      loading: 'lazy',
+      widths: '500, 700, 1000, 1400',
+      sizes: '(min-width: 901px) 50vw, 100vw',
+      alt: section.settings.product_image.alt
+  }}
+</div>
+        </div>
+      {% else %}
+        <div class="drop-teaser-right-image drop-teaser-right-image--empty">
+          <span>Notification image</span>
+        </div>
+      {% endif %}
+
+      <div class="drop-teaser-right-content">
+        <h3>{{ section.settings.notify_heading }}</h3>
+
+        {% assign newsletter_form_id = 'drop-teaser-newsletter-' | append: section.id %}
+        {% form 'customer', id: newsletter_form_id, class: 'drop-teaser-form' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+
+          <label class="visually-hidden" for="DropTeaserEmail-{{ section.id }}">
+            Email address
+          </label>
+
+          <div class="drop-teaser-email-row">
+            <input
+              id="DropTeaserEmail-{{ section.id }}"
+              type="email"
+              name="contact[email]"
+              placeholder="{{ section.settings.email_placeholder }}"
+              autocomplete="email"
+              required
+            >
+            <button type="submit">{{ section.settings.button_label }}</button>
+          </div>
+
+          {% if form.posted_successfully? %}
+            <p class="drop-teaser-form-message" tabindex="-1">
+              {{ section.settings.success_message }}
+            </p>
+          {% endif %}
+
+          {% if form.errors %}
+            <div class="drop-teaser-form-message drop-teaser-form-message--error" tabindex="-1">
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+        {% endform %}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap');
+
+  #{{ section_id }} {
+    --drop-brown: #421802;
+    --drop-white: #ffffff;
+    --drop-cream: #f5f1ec;
+    --drop-section-gap: 16px;
+    --drop-panel-radius: 4px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .drop-teaser-inner {
+    width: 100%;
+    max-width: 1440px;
+    min-height: 567px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--drop-section-gap);
+  }
+
+  /* LEFT PANEL */
+  #{{ section_id }} .drop-teaser-left {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 692 / 519;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: var(--drop-panel-radius);
+    background: var(--drop-brown);
+  }
+
+  #{{ section_id }} .drop-teaser-artwork {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  #{{ section_id }} .drop-teaser-artwork-vectors {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    z-index: 1;
+  }
+
+  #{{ section_id }} .drop-teaser-background-letter {
+    position: absolute;
+    left: 50%;
+    top: 49%;
+    z-index: 0;
+    transform: translate(-50%, -50%);
+    color: rgba(255, 255, 255, 0.07);
+    font-family: 'Pinyon Script', cursive;
+    font-size: clamp(430px, 78vw, 1161px);
+    font-weight: 400;
+    line-height: 0.75;
+    letter-spacing: -48px;
+    white-space: nowrap;
+  }
+
+  #{{ section_id }} .drop-teaser-artwork-dice,
+  #{{ section_id }} .drop-teaser-artwork-bottom-shape,
+  #{{ section_id }} .drop-teaser-artwork-left-shape,
+  #{{ section_id }} .drop-teaser-artwork-flame,
+  #{{ section_id }} .drop-teaser-artwork-torso {
+    position: absolute;
+    z-index: 2;
+    height: auto;
+    object-fit: contain;
+  }
+
+  #{{ section_id }} .drop-teaser-artwork-dice {
+    width: 12.97%;
+    left: 47.5%;
+
+  }
+
+  #{{ section_id }} .drop-teaser-artwork-bottom-shape {
+    width: 11.87%;
+    left: 32.8%;
+    top: 88.8%;
+    transform: rotate(14.14deg);
+    transform-origin: center;
+  }
+
+  #{{ section_id }} .drop-teaser-artwork-left-shape {
+    width: 82.15px;
+    left: -1.8%;
+    top: 26.0%;
+    transform: rotate(26.6deg);
+    transform-origin: center;
+  }
+
+  #{{ section_id }} .drop-teaser-artwork-flame {
+    width: 44.48px;
+    top: 66.0%;
+    transform: rotate(42.98deg);
+  }
+
+  #{{ section_id }} .drop-teaser-artwork-torso {
+    width: 14.03%;
+    right: 5.5%;
+    top: -2.0%;
+  }
+
+  #{{ section_id }} .drop-teaser-artwork-heart-lock {
+    position: absolute;
+    z-index: 3;
+    width: 119px;
+    height: 103px;
+    left: 50%;
+    top: 14%;
+    transform: translateX(-50%);
+    object-fit: contain;
+  }
+
+  #{{ section_id }} .drop-teaser-artwork-group-160 {
+    position: absolute;
+    z-index: 3;
+    width: 62px;
+    height: 43px;
+    right: 7%;
+    bottom: 1%;
+    transform: rotate(-20.77deg);
+    transform-origin: center;
+    object-fit: contain;
+  }
+
+  #{{ section_id }} .drop-teaser-left-content {
+    position: absolute;
+    inset: 20px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 48px;
+  }
+
+  #{{ section_id }} .drop-teaser-top-art {
+    width: 100%;
+    height: 103px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    visibility: hidden;
+  }
+
+  #{{ section_id }} .drop-teaser-top-art img {
+    width: 119px;
+    height: 103px;
+    object-fit: contain;
+  }
+
+  #{{ section_id }} .drop-teaser-headline-row {
+    width: 100%;
+    min-height: 48.3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  #{{ section_id }} .drop-teaser-headline {
+    margin: 0;
+    color: var(--drop-white);
+    font-family: 'Pinyon Script', cursive;
+    font-size: clamp(31px, 4.15vw, 40px);
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  #{{ section_id }} .drop-teaser-headline-mark {
+    color: var(--drop-white);
+    font-family: 'Pinyon Script', cursive;
+    font-size: 34px;
+    line-height: 1;
+    transform: translateY(2px);
+  }
+
+  #{{ section_id }} .drop-teaser-countdown {
+    width: 314.3px;
+    min-height: 104.78px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  #{{ section_id }} .drop-teaser-time-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #{{ section_id }} .drop-teaser-digits {
+    display: flex;
+    gap: 4px;
+  }
+
+  #{{ section_id }} .drop-teaser-digits span {
+    width: 35px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    background: #f5f1ec;
+    color: #421802;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  #{{ section_id }} .drop-teaser-separator {
+    color: var(--drop-white);
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    line-height: 45px;
+  }
+
+  #{{ section_id }} .drop-teaser-label {
+    color: var(--drop-white);
+    font-family: 'Pinyon Script', cursive;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  #{{ section_id }} .drop-teaser-expired {
+    margin: -25px 0 0;
+    color: var(--drop-white);
+    font-family: 'Pinyon Script', cursive;
+    font-size: 24px;
+  }
+
+  #{{ section_id }} .drop-teaser-right {
+    width: 100%;
+    height: 519px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid #D9D9D9;
+    border-radius: 8px;
+    background: #FFFBF8;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  #{{ section_id }} .drop-teaser-right-image {
+    position: relative;
+    width: 100%;
+    height: 365px;
+    flex: 0 0 365px;
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .drop-teaser-right-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  
+
+  /* NEWSLETTER */
+  #{{ section_id }} .drop-teaser-right-content {
+    width: 100%;
+    height: 69px;
+    flex: 0 0 69px;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  /* Get notified */
+  #{{ section_id }} .drop-teaser-right-content h3 {
+    width: 524px;
+    height: 22px;
+    box-sizing: border-box;
+    margin: 0 0 8px;
+    padding: 0;
+    color: #421802;
+    font-family: var(--font-body-family, Arial, sans-serif);
+    font-size: 16px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 140%;
+    letter-spacing: 0;
+  }
+
+  #{{ section_id }} .drop-teaser-form {
+    width: 100%;
+    height: 39px;
+    margin: 0;
+    padding: 0;
+  }
+
+  #{{ section_id }} .drop-teaser-email-row {
+    width: 100%;
+    height: 39px;
+    display: flex;
+    align-items: stretch;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* EMAIL INPUT */
+  #{{ section_id }} .drop-teaser-email-row input {
+    width: calc(100% - 120px);
+    height: 39px;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 0;
+    border-bottom: 1px solid #421802;
+    border-radius: 0;
+    outline: 0;
+    padding: 16px 0 8px;
+    margin: 0;
+    background: transparent;
+    color: #75462D;
+    font-family: var(--font-body-family, Arial, sans-serif);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: 0;
+  }
+
+  #{{ section_id }} .drop-teaser-email-row input::placeholder {
+    color: #75462D;
+    opacity: 1;
+  }
+
+  #{{ section_id }} .drop-teaser-email-row input:focus {
+    box-shadow: none;
+  }
+
+  /* NOTIFY ME */
+  #{{ section_id }} .drop-teaser-email-row button {
+    position: relative;
+    width: 120px;
+    height: 48px;
+    flex: 0 0 120px;
+    box-sizing: border-box;
+    border: 0;
+    border-bottom: 1px solid #421802;
+    border-radius: 0;
+    background: transparent;
+    color: #421802;
+    padding: 16px 0 16px 32px;
+    margin: -9px 0 0;
+    font-family: var(--font-body-family, Arial, sans-serif);
+    font-size: 14px;
+    font-weight: 600;
+    font-style: normal;
+    line-height: 100%;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  #{{ section_id }} .drop-teaser-email-row button::before {
+    content: '✦';
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    width: 16px;
+    height: 16px;
+    color: #F5F5F5;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
+  }
+
+  #{{ section_id }} .drop-teaser-email-row button:hover {
+    opacity: 0.8;
+  }
+
+  #{{ section_id }} .drop-teaser-email-row button:focus-visible {
+    outline: 2px solid #421802;
+    outline-offset: 2px;
+  }
+
+  /* FORM STATES */
+  #{{ section_id }} .drop-teaser-form-message {
+    margin: 8px 0 0;
+    color: #176b40;
+    font-size: 13px;
+  }
+
+  #{{ section_id }} .drop-teaser-form-message--error {
+    color: #a12626;
+  }
+
+  #{{ section_id }} .visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  @media screen and (max-width: 900px) {
+    #{{ section_id }} .drop-teaser-inner {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    #{{ section_id }} .drop-teaser-left,
+    #{{ section_id }} .drop-teaser-right {
+      aspect-ratio: auto;
+      min-height: 519px;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    #{{ section_id }} .drop-teaser-inner {
+      padding: 12px;
+      gap: 12px;
+    }
+
+    #{{ section_id }} .drop-teaser-left,
+    #{{ section_id }} .drop-teaser-right {
+      min-height: 430px;
+    }
+
+    #{{ section_id }} .drop-teaser-left-content {
+      inset: 14px;
+      gap: 34px;
+    }
+
+    #{{ section_id }} .drop-teaser-top-art {
+      height: 82px;
+    }
+
+    #{{ section_id }} .drop-teaser-artwork-heart-lock {
+      width: 85px;
+      height: auto;
+    }
+
+    #{{ section_id }} .drop-teaser-headline {
+      font-size: 32px;
+    }
+
+    #{{ section_id }} .drop-teaser-headline-mark {
+      font-size: 27px;
+    }
+
+    #{{ section_id }} .drop-teaser-countdown {
+      width: 100%;
+      max-width: 314px;
+      gap: 2px;
+    }
+
+    #{{ section_id }} .drop-teaser-digits {
+      gap: 2px;
+    }
+
+    #{{ section_id }} .drop-teaser-digits span {
+      width: 28px;
+      height: 40px;
+      font-size: 16px;
+    }
+
+    #{{ section_id }} .drop-teaser-separator {
+      line-height: 40px;
+      font-size: 18px;
+    }
+
+    #{{ section_id }} .drop-teaser-label {
+      font-size: 17px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} * {
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const section = document.getElementById('{{ section_id }}');
+    if (!section || section.dataset.initialized === 'true') return;
+
+    section.dataset.initialized = 'true';
+
+    const targetValue = section.dataset.targetDate;
+    const target = targetValue ? new Date(targetValue).getTime() : NaN;
+
+    const daysEl = section.querySelector('[data-days]');
+    const hoursEl = section.querySelector('[data-hours]');
+    const secondsEl = section.querySelector('[data-seconds]');
+    const countdownEl = section.querySelector('[data-countdown]');
+    const expiredEl = section.querySelector('[data-expired]');
+
+    if (Number.isNaN(target)) return;
+
+    const setPair = (element, value) => {
+      if (!element) return;
+      const formatted = String(value).padStart(2, '0');
+      const digits = element.querySelectorAll('span');
+      digits[0].textContent = formatted[0];
+      digits[1].textContent = formatted[1];
+    };
+
+    const update = () => {
+      const remaining = target - Date.now();
+
+      if (remaining <= 0) {
+        setPair(daysEl, 0);
+        setPair(hoursEl, 0);
+        setPair(secondsEl, 0);
+
+        countdownEl.hidden = true;
+        expiredEl.hidden = false;
+        return false;
+      }
+
+      const totalSeconds = Math.floor(remaining / 1000);
+
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const seconds = totalSeconds % 60;
+
+      setPair(daysEl, days);
+      setPair(hoursEl, hours);
+      setPair(secondsEl, seconds);
+
+      return true;
+    };
+
+    update();
+
+    const timer = window.setInterval(() => {
+      if (!update()) window.clearInterval(timer);
+    }, 1000);
+
+    document.addEventListener('shopify:section:unload', (event) => {
+      if (event.detail && event.detail.sectionId === '{{ section.id }}') {
+        window.clearInterval(timer);
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Assignment - Drop Teaser",
+  "tag": "section",
+  "class": "section-assignment-drop-teaser",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Countdown"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "New drop coming soon"
+    },
+    {
+      "type": "text",
+      "id": "target_date",
+      "label": "Target date and time",
+      "info": "Use ISO format, for example 2026-10-15T18:00:00+05:30"
+    },
+    {
+      "type": "text",
+      "id": "expired_text",
+      "label": "Expired message",
+      "default": "The drop is live!"
+    },
+    {
+      "type": "header",
+      "content": "Notification card"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Notification image"
+    },
+    {
+      "type": "text",
+      "id": "notify_heading",
+      "label": "Notification heading",
+      "default": "Get notified"
+    },
+    {
+        "type": "text",
+        "id": "email_placeholder",
+        "label": "Email placeholder",
+        "default": "user@gmail.com"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Notify me"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "You're on the list!"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Assignment - Drop Teaser"
+    }
+  ]
+}
+{% endschema %}

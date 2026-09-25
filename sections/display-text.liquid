@@ -1,0 +1,128 @@
+{% liquid
+  assign section_id = 'display-text-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="assignment-display-text"
+>
+  <div class="display-text-inner">
+    <h2 class="display-text-heading">
+      <span class="display-text-image-text">
+        {{ section.settings.text }}
+      </span>
+    </h2>
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    width: 100%;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .display-text-inner {
+    width: 100%;
+    min-height: 264px;
+    padding: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #421802;
+  }
+
+  #{{ section_id }} .display-text-heading {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    font-family: 'Pinyon Script', cursive;
+    font-size: clamp(90px, 11vw, 160px);
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  #{{ section_id }} .display-text-image-text {
+    display: inline-block;
+
+    {% if section.settings.fill_image != blank %}
+      color: transparent;
+      background-image: url('{{ section.settings.fill_image | image_url: width: 1600 }}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% else %}
+      color: #421802;
+    {% endif %}
+  }
+
+  
+  @supports not (
+    (-webkit-background-clip: text) or
+    (background-clip: text)
+  ) {
+    #{{ section_id }} .display-text-image-text {
+      color: #421802;
+      background: none;
+      -webkit-text-fill-color: initial;
+    }
+  }
+
+  @media screen and (max-width: 900px) {
+    #{{ section_id }} .display-text-inner {
+      min-height: 220px;
+      padding: 48px 32px;
+    }
+
+    #{{ section_id }} .display-text-heading {
+      font-size: clamp(70px, 12vw, 120px);
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    #{{ section_id }} .display-text-inner {
+      min-height: 160px;
+      padding: 36px 20px;
+    }
+
+    #{{ section_id }} .display-text-heading {
+      font-size: clamp(52px, 15vw, 90px);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Assignment - Display Text",
+  "tag": "section",
+  "class": "section-assignment-display-text",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "Best sellers"
+    },
+    {
+      "type": "image_picker",
+      "id": "fill_image",
+      "label": "Text fill image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Assignment - Display Text"
+    }
+  ]
+}
+{% endschema %}
