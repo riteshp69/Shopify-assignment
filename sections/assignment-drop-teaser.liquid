@@ -134,17 +134,6 @@
     <div class="drop-teaser-right">
       {% if section.settings.product_image != blank %}
         <div class="drop-teaser-right-image">
-          {{
-            section.settings.product_image
-            | image_url: width: 1400
-            | image_tag:
-              loading: 'lazy',
-              widths: '500, 700, 1000, 1400',
-              sizes: '(min-width: 901px) 50vw, 100vw',
-              alt: section.settings.product_image.alt
-          }}
-
-          <div class="drop-teaser-right-image">
   {{
     section.settings.product_image
     | image_url: width: 1400
@@ -155,7 +144,6 @@
       alt: section.settings.product_image.alt
   }}
 </div>
-        </div>
       {% else %}
         <div class="drop-teaser-right-image drop-teaser-right-image--empty">
           <span>Notification image</span>

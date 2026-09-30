@@ -189,9 +189,19 @@
       <h3 class="assignment-product-card__title">{{ product.title | escape }}</h3>
     </a>
 
-    {% if product.vendor != blank %}
-      <p class="assignment-product-card__vendor">{{ product.vendor | escape }}</p>
-    {% endif %}
+    {% assign show_vendor = false %}
+
+{% for tag in product.tags %}
+  {% assign normalized_tag = tag | downcase | strip %}
+  {% if normalized_tag == 'show-vendor' %}
+    {% assign show_vendor = true %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% if show_vendor and product.vendor != blank %}
+  <p class="assignment-product-card__vendor">{{ product.vendor | escape }}</p>
+{% endif %}
 
     {% if product.type != blank %}
       <p class="assignment-product-card__secondary">{{ product.type | escape }}</p>

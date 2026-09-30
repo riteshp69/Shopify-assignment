@@ -24,16 +24,22 @@
 
     <div class="assignment-hero-content">
 
-      {% if section.settings.heading != blank %}
-        <img
-          src="{{ 'spring-break.png' | asset_url }}"
-          alt="{{ section.settings.heading | escape }}"
-          class="assignment-hero-lockup"
-          width="390"
-          height="108"
-          loading="eager"
-        >
-      {% endif %}
+      {% if section.settings.heading_image != blank %}
+  {{
+    section.settings.heading_image
+    | image_url: width: 800
+    | image_tag:
+      class: 'assignment-hero-lockup',
+      loading: 'eager',
+      widths: '390, 600, 800',
+      sizes: '(max-width: 749px) 72vw, 390px',
+      alt: section.settings.heading | escape
+  }}
+{% elsif section.settings.heading != blank %}
+  <h1 class="assignment-hero-heading">
+    {{ section.settings.heading | escape }}
+  </h1>
+{% endif %}
 
       {% if section.settings.button_label != blank %}
         <a
@@ -100,7 +106,19 @@
     width: min(390px, 32vw);
     height: auto;
     margin: 0 0 18px;
+    margin-bottom: 14px;
+    font-size: clamp(28px, 10vw, 48px);
   }
+
+  #AssignmentHero-{{ section.id }} .assignment-hero-heading {
+  margin: 0 0 18px;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 700;
+  line-height: 0.95;
+  text-align: center;
+}
 
   #AssignmentHero-{{ section.id }} .assignment-hero-button {
     display: inline-flex;
@@ -215,12 +233,17 @@
       "id": "image",
       "label": "Hero image"
     },
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Headline",
-      "default": "Spring Break"
-    },
+   {
+  "type": "text",
+  "id": "heading",
+  "label": "Headline",
+  "default": "Spring Break"
+},
+{
+  "type": "image_picker",
+  "id": "heading_image",
+  "label": "Headline image"
+},
     {
       "type": "text",
       "id": "button_label",

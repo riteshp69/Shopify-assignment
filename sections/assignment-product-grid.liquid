@@ -77,12 +77,12 @@
   }
 
   #AssignmentProductGrid-{{ section.id }} .assignment-product-card__media {
-    position: relative;
-    width: 214px;
-    height: 300px;
-    overflow: hidden;
-    background: #f3f1ef;
-  }
+  position: relative;
+  width: 100%;
+  aspect-ratio: 214 / 300;
+  overflow: hidden;
+  background: #f3f1ef;
+}
 
   #AssignmentProductGrid-{{ section.id }} .assignment-product-card__image,
   #AssignmentProductGrid-{{ section.id }} .assignment-product-card__placeholder {
@@ -318,16 +318,15 @@
   }
 
   @media screen and (max-width: 749px) {
-    #AssignmentProductGrid-{{ section.id }} {
-      padding: 32px 16px;
-    }
-
-    #AssignmentProductGrid-{{ section.id }} .assignment-product-grid__list {
-      grid-template-columns: repeat(2, minmax(0, 214px));
-      justify-content: center;
-      gap: 24px 16px;
-    }
+  #AssignmentProductGrid-{{ section.id }} {
+    padding: 32px 16px;
   }
+
+  #AssignmentProductGrid-{{ section.id }} .assignment-product-grid__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 16px;
+  }
+}
 
   @media screen and (prefers-reduced-motion: reduce) {
     #AssignmentProductGrid-{{ section.id }} .assignment-product-card__swatch {
@@ -371,7 +370,7 @@
 
     const updateCard = (card, button) => {
       const image = card.querySelector('[data-product-image]');
-      const titleLink = card.querySelector('[data-product-link]');
+      const productLinks = card.querySelectorAll('[data-product-link]');
       const price = card.querySelector('[data-product-price]');
       const compare = card.querySelector('[data-product-compare]');
       const status = card.querySelector('[data-product-status]');
@@ -390,9 +389,11 @@
         image.alt = imageAlt;
       }
 
-      if (titleLink && variantUrl) {
-        titleLink.href = variantUrl;
-      }
+      if (variantUrl) {
+        productLinks.forEach((link) => {
+        link.href = variantUrl;
+      });
+    }
 
       if (price) {
         price.textContent = button.dataset.price || '';
